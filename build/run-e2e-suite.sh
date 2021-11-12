@@ -16,6 +16,7 @@
 
 if ! [ -z "$DEBUG" ]; then
 	set -x
+  set -o xtrace
 fi
 
 set -o errexit

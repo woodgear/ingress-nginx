@@ -24,7 +24,7 @@ ifndef VERBOSE
 endif
 
 # set default shell
-SHELL=/bin/bash -o pipefail -o errexit
+SHELL=/bin/bash -o pipefail -o errexit -o xtrace
 
 # Use the 0.0 tag for testing, it shouldn't clobber any release builds
 TAG ?= $(shell cat TAG)
@@ -127,6 +127,10 @@ lua-test: ## Run lua unit tests.
 e2e-test:  ## Run e2e tests (expects access to a working Kubernetes cluster).
 	@build/run-e2e-suite.sh
 
+.PHONY: kind-e2e-test
+kind-e2e-test:  ## Run e2e tests using kind.
+	@test/e2e/run.sh
+
 .PHONY: e2e-test-binary
 e2e-test-binary:  ## Build binary for e2e tests.
 	@build/run-in-docker.sh \
@@ -173,9 +177,6 @@ misspell:  ## Check for spelling errors.
 		-error \
 		cmd/* internal/* deploy/* docs/* design/* test/* README.md
 
-.PHONY: kind-e2e-test
-kind-e2e-test:  ## Run e2e tests using kind.
-	@test/e2e/run.sh
 
 .PHONY: kind-e2e-chart-tests
 kind-e2e-chart-tests: ## Run helm chart e2e tests

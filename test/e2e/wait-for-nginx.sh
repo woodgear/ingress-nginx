@@ -17,6 +17,7 @@
 set -e
 if ! [ -z $DEBUG ]; then
 	set -x
+  set -o xtrace
 fi
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

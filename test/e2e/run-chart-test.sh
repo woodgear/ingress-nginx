@@ -18,6 +18,7 @@ KIND_LOG_LEVEL="1"
 
 if ! [ -z $DEBUG ]; then
   set -x
+  set -o xtrace
   KIND_LOG_LEVEL="6"
 fi
 

@@ -16,12 +16,13 @@
 
 if [ -n "$DEBUG" ]; then
   set -x
+  set -o xtrace
 fi
 
 set -o errexit
 set -o nounset
 set -o pipefail
-
+echo "run-in-docker"
 # temporal directory for the /etc/ingress-controller directory
 INGRESS_VOLUME=$(mktemp -d)
 
@@ -58,6 +59,7 @@ mkdir -p "${KUBE_ROOT}/bin" "${KUBE_ROOT}/bin/${ARCH}"
 if [[ "$DOCKER_IN_DOCKER_ENABLED" == "true" ]]; then
   /bin/bash -c "${FLAGS}"
 else
+  echo "docker run sth "
   docker run                                            \
     --tty                                               \
     --rm                                                \

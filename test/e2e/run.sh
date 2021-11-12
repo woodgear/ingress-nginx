@@ -18,13 +18,14 @@ KIND_LOG_LEVEL="1"
 
 if ! [ -z $DEBUG ]; then
   set -x
+  set -o xtrace
   KIND_LOG_LEVEL="6"
 fi
 
 set -o errexit
 set -o nounset
 set -o pipefail
-
+echo "test/e2e/run.sh"
 cleanup() {
   if [[ "${KUBETEST_IN_DOCKER:-}" == "true" ]]; then
     kind "export" logs --name ${KIND_CLUSTER_NAME} "${ARTIFACTS}/logs" || true
@@ -74,6 +75,7 @@ fi
 if [ "${SKIP_IMAGE_CREATION:-false}" = "false" ]; then
   if ! command -v ginkgo &> /dev/null; then
     go get github.com/onsi/ginkgo/ginkgo@v1.16.4
+    echo $PWD
   fi
 
   echo "[dev-env] building image"

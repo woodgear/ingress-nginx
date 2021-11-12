@@ -34,7 +34,7 @@ var _ = framework.IngressNginxDescribe("[Ingress] [PathType] exact", func() {
 		f.NewEchoDeployment()
 	})
 
-	ginkgo.It("should choose exact location for /exact", func() {
+	ginkgo.FIt("should choose exact location for /exact", func() {
 
 		host := "exact.path"
 

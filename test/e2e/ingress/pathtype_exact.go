@@ -17,6 +17,7 @@ limitations under the License.
 package ingress
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -27,21 +28,24 @@ import (
 	"k8s.io/ingress-nginx/test/e2e/framework"
 )
 
-var _ = framework.IngressNginxDescribe("[Ingress] [PathType] exact", func() {
+var _ = framework.IngressNginxFDescribe("[Ingress] [PathType] exact", func() {
+	fmt.Fprintf(ginkgo.GinkgoWriter, "start %s up\n ", "fuck fuck")
 	f := framework.NewDefaultFramework("exact")
 
 	ginkgo.BeforeEach(func() {
+		fmt.Fprintf(ginkgo.GinkgoWriter, "before %s each \n", "fuck fuck")
 		f.NewEchoDeployment()
 	})
 
-	ginkgo.FIt("should choose exact location for /exact", func() {
-
+	ginkgo.FIt("log!!!! should choose exact location for /exact", func() {
 		host := "exact.path"
+		fmt.Fprintf(ginkgo.GinkgoWriter, "show me the %s log\n", "fuck fuck")
+		assert.Equal(ginkgo.GinkgoT(), 1, 2, "fuck fail")
+		assert.FailNow(ginkgo.GinkgoT(), "fuck fail")
 
 		annotations := map[string]string{
 			"nginx.ingress.kubernetes.io/configuration-snippet": `more_set_input_headers "pathType: exact";`,
 		}
-
 		var exactPathType = networking.PathTypeExact
 		ing := framework.NewSingleIngress("exact", "/exact", host, f.Namespace, framework.EchoService, 80, annotations)
 		ing.Spec.Rules[0].IngressRuleValue.HTTP.Paths[0].PathType = &exactPathType

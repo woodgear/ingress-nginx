@@ -91,6 +91,7 @@ func NewDefaultFramework(baseName string) *Framework {
 
 // BeforeEach gets a client and makes a namespace.
 func (f *Framework) BeforeEach() {
+	Logf("wg log before each")
 	var err error
 
 	if f.KubeClientSet == nil {
@@ -177,6 +178,9 @@ func IngressNginxDescribe(text string, body func()) bool {
 	return ginkgo.Describe(text, body)
 }
 
+func IngressNginxFDescribe(text string, body func()) bool {
+	return ginkgo.FDescribe(text, body)
+}
 // DescribeAnnotation wrapper function for ginkgo describe. Adds namespacing.
 func DescribeAnnotation(text string, body func()) bool {
 	return ginkgo.Describe("[Annotations] "+text, body)

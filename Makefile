@@ -54,7 +54,7 @@ REGISTRY ?= gcr.io/k8s-staging-ingress-nginx
 BASE_IMAGE ?= k8s.gcr.io/ingress-nginx/nginx:v20210926-g5662db450@sha256:1ef404b5e8741fe49605a1f40c3fdd8ef657aecdb9526ea979d1672eeabd0cd9
 
 GOARCH=$(ARCH)
-
+export DEBUG = true
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z0-9_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
@@ -135,6 +135,12 @@ kind-e2e-test:  ## Run e2e tests using kind.
 e2e-test-binary:  ## Build binary for e2e tests.
 	@build/run-in-docker.sh \
 		ginkgo build ./test/e2e
+
+.PHONY: e2e-test-build-and-run
+e2e-test-build-and-run:
+	make -C ./test/e2e-image image
+	kind load docker-image nginx-ingress-controller:e2e --name ingress-nginx-dev
+	make e2e-test
 
 .PHONY: print-e2e-suite
 print-e2e-suite: e2e-test-binary ## Prints information about the suite of e2e tests.

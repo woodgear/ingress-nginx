@@ -70,13 +70,20 @@ until kubectl get secret | grep -q -e ^ingress-nginx-e2e-token; do \
 done
 
 echo -e "Starting the e2e test pod"
-
-kubectl run --rm \
+unset DEBUG 
+echo kubectl run \
   --attach \
   --restart=Never \
-  --env="E2E_NODES=${E2E_NODES}" \
   --env="FOCUS=${FOCUS}" \
   --env="E2E_CHECK_LEAKS=${E2E_CHECK_LEAKS}" \
   --overrides='{ "apiVersion": "v1", "spec":{"serviceAccountName": "ingress-nginx-e2e"}}' \
   e2e --image=nginx-ingress-controller:e2e
 
+
+kubectl run \
+  --attach \
+  --restart=Never \
+  --env="FOCUS=${FOCUS}" \
+  --env="E2E_CHECK_LEAKS=${E2E_CHECK_LEAKS}" \
+  --overrides='{ "apiVersion": "v1", "spec":{"serviceAccountName": "ingress-nginx-e2e"}}' \
+  e2e --image=nginx-ingress-controller:e2e

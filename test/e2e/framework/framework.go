@@ -91,7 +91,7 @@ func NewDefaultFramework(baseName string) *Framework {
 
 // BeforeEach gets a client and makes a namespace.
 func (f *Framework) BeforeEach() {
-	Logf("wg log before each")
+	Logf("[wg] log before each")
 	var err error
 
 	if f.KubeClientSet == nil {

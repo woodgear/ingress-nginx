@@ -78,8 +78,13 @@ echo kubectl run \
   --env="E2E_CHECK_LEAKS=${E2E_CHECK_LEAKS}" \
   --overrides='{ "apiVersion": "v1", "spec":{"serviceAccountName": "ingress-nginx-e2e"}}' \
   e2e --image=nginx-ingress-controller:e2e
-
-
+if [[ -n "$SHELL_MODE" ]]; then
+kubectl run \
+  -it \
+  --restart=Never \
+  --overrides='{ "apiVersion": "v1", "spec":{"serviceAccountName": "ingress-nginx-e2e"}}' \
+  e2e --image=nginx-ingress-controller:e2e -- sh
+else
 kubectl run \
   --attach \
   --restart=Never \
@@ -87,3 +92,5 @@ kubectl run \
   --env="E2E_CHECK_LEAKS=${E2E_CHECK_LEAKS}" \
   --overrides='{ "apiVersion": "v1", "spec":{"serviceAccountName": "ingress-nginx-e2e"}}' \
   e2e --image=nginx-ingress-controller:e2e
+
+fi

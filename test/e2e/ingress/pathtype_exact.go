@@ -29,17 +29,17 @@ import (
 )
 
 var _ = framework.IngressNginxFDescribe("[Ingress] [PathType] exact", func() {
-	fmt.Fprintf(ginkgo.GinkgoWriter, "start %s up\n ", "fuck fuck")
+	_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "-_- start %s up\n ", "fuck fuck")
 	f := framework.NewDefaultFramework("exact")
 
 	ginkgo.BeforeEach(func() {
-		fmt.Fprintf(ginkgo.GinkgoWriter, "before %s each \n", "fuck fuck")
+		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "before %s each \n", "fuck fuck")
 		f.NewEchoDeployment()
 	})
 
 	ginkgo.FIt("log!!!! should choose exact location for /exact", func() {
 		host := "exact.path"
-		fmt.Fprintf(ginkgo.GinkgoWriter, "show me the %s log\n", "fuck fuck")
+		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "show me the %s log\n", "fuck fuck")
 		assert.Equal(ginkgo.GinkgoT(), 1, 2, "fuck fail")
 		assert.FailNow(ginkgo.GinkgoT(), "fuck fail")
 

@@ -185,9 +185,12 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: build-image
         run: |
           export TAG=$(cat images/nginx/TAG)
-          cd images/nginx/rootfs && docker buildx build --platform=${{ env.PLATFORMS }} --push -t ingressnginx/nginx:${TAG} .
+          echo "${{ github.actor }}"
+          cd images/nginx/rootfs && docker buildx build --platform=${{ env.PLATFORMS }} --push -t ghcr.io/${{ github.actor }}ingressnginx-nginx:${TAG} .
+          # cd images/nginx/rootfs && docker buildx build --platform=linux/amd64  --push -t ghcr.io/${{ github.actor }}/ingressnginx-nginx:${TAG} .

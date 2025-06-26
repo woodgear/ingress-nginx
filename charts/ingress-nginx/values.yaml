@@ -30,9 +30,9 @@ controller:
     ## for backwards compatibility consider setting the full image url via the repository value below
     ## use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail
     ## repository:
-    tag: "v1.12.2"
-    digest: sha256:03497ee984628e95eca9b2279e3f3a3c1685dd48635479e627d219f00c8eefa9
-    digestChroot: sha256:a697e2bfa419768315250d079ccbbca45f6099c60057769702b912d20897a574
+    tag: "v1.12.3"
+    digest: sha256:ac444cd9515af325ba577b596fe4f27a34be1aa330538e8b317ad9d6c8fb94ee
+    digestChroot: sha256:d830fba93e9e0f5ef1462f5fe8a7cd7b167178b79e6c10c041c7da19f1ac66ab
     pullPolicy: IfNotPresent
     runAsNonRoot: true
     # -- This value must not be changed using the official image.
@@ -78,6 +78,8 @@ controller:
   # By default, while using host network, name resolution uses the host's DNS. If you wish nginx-controller
   # to keep resolving names inside the k8s network, use ClusterFirstWithHostNet.
   dnsPolicy: ClusterFirst
+  # -- Instruct the kubelet to use the named RuntimeClass to run the pod
+  runtimeClassName: ""
   # -- Bare-metal considerations via the host network https://kubernetes.github.io/ingress-nginx/deploy/baremetal/#via-the-host-network
   # Ingress status was blank because there is no Service exposing the Ingress-Nginx Controller in a configuration using the host network, the default --publish-service flag used in standard cloud setups does not apply
   reportNodeInternalIp: false
@@ -774,6 +776,8 @@ controller:
       type: ClusterIP
     createSecretJob:
       name: create
+      # -- Deadline in seconds for the job to complete. Must be greater than 0 to enforce. If unset or 0, no deadline is enforced.
+      activeDeadlineSeconds: 0
       # -- Security context for secret creation containers
       securityContext:
         runAsNonRoot: true
@@ -795,6 +799,8 @@ controller:
       #   memory: 20Mi
     patchWebhookJob:
       name: patch
+      # -- Deadline in seconds for the job to complete. Must be greater than 0 to enforce. If unset or 0, no deadline is enforced.
+      activeDeadlineSeconds: 0
       # -- Security context for webhook patch containers
       securityContext:
         runAsNonRoot: true
@@ -816,12 +822,14 @@ controller:
         ## for backwards compatibility consider setting the full image url via the repository value below
         ## use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail
         ## repository:
-        tag: v1.5.3
-        digest: sha256:2cf4ebfa82a37c357455458f6dfc334aea1392d508270b2517795a9933a02524
+        tag: v1.5.4
+        digest: sha256:7a38cf0f8480775baaee71ab519c7465fd1dfeac66c421f28f087786e631456e
         pullPolicy: IfNotPresent
       # -- Provide a priority class name to the webhook patching job
       ##
       priorityClassName: ""
+      # -- Instruct the kubelet to use the named RuntimeClass to run the pod
+      runtimeClassName: ""
       podAnnotations: {}
       # NetworkPolicy for webhook patch
       networkPolicy:
@@ -1195,6 +1203,8 @@ defaultBackend:
     servicePort: 80
     type: ClusterIP
   priorityClassName: ""
+  # -- Instruct the kubelet to use the named RuntimeClass to run the pod
+  runtimeClassName: ""
   # -- Labels to be added to the default backend resources
   labels: {}
 ## Enable RBAC as per https://github.com/kubernetes/ingress-nginx/blob/main/docs/deploy/rbac.md and https://github.com/kubernetes/ingress-nginx/issues/266

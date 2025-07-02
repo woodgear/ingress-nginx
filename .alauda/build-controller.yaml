@@ -1,0 +1,114 @@
+apiVersion: builds.katanomi.dev/v1alpha1
+kind: Build
+spec:
+  params:
+    - name: controller
+      description: controller image version
+      default: "1.12.2.1"
+    - name: base_image
+      description: base image
+      default: "registry.alauda.cn:60080/acp/ingress-nginx/nginx:v2.2.0.20250702153603"
+  runTemplate:
+    spec:
+      workspaces:
+      - name: source
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+              - ReadWriteMany
+            resources:
+              requests:
+                storage: 500Mi
+      taskRunSpecs:
+        - pipelineTaskName: build-ingress-nginx-controller
+          stepOverrides:
+            - name: build
+              resources:
+                requests:
+                  cpu: 2000m
+                  memory: 1024Mi
+                limits:
+                  cpu: 2000m
+                  memory: 1024Mi
+  workspaces:
+    - description: >
+        This workspace is shared among all the pipeline tasks to read/write
+        common resources
+      name: source
+  tasks:
+    - name: version
+      timeout: 5m
+      retries: 1
+      workspaces:
+        - name: source
+          workspace: source
+      taskRef:
+        kind: ClusterTask
+        name: alauda-generate-version
+      params:
+        - name: repo-type
+          value: gitlab
+        - name: repo-url
+          value: $(params.git-url)
+        - name: repo-ref
+          value: $(params.git-revision)
+    - name: build-ingress-nginx-controller
+      timeout: 100m
+      retries: 3
+      taskRef:
+        kind: ClusterTask
+        name: alauda-build-image
+      workspaces:
+        - name: source
+          workspace: source
+      params:
+        - name: container-image
+          value: build-harbor.alauda.cn/acp/ingress-nginx/controller
+        - name: container-image-tag
+          value: "$(params.controller).$(tasks.version.results.timestamp)"
+        - name: dockerfile
+          value: ./rootfs/Dockerfile
+        - name: context
+          value: ./rootfs
+        - name: platform
+          value:
+            - linux/amd64
+            - linux/arm64
+        - name: verbose
+          value: "true"
+        - name: labels
+          value:
+          - commit=$(build.git.lastCommit.id)
+          - branch=$(build.git.branch.name)
+    - name: build-ingress-nginx-controller-chroot
+      timeout: 100m
+      retries: 3
+      taskRef:
+        kind: ClusterTask
+        name: alauda-build-image
+      workspaces:
+        - name: source
+          workspace: source
+      params:
+        - name: container-image
+          value: build-harbor.alauda.cn/acp/ingress-nginx/controller-chroot
+        - name: container-image-tag
+          value: "$(params.controller).$(tasks.version.results.timestamp)"
+        - name: dockerfile
+          value: ./images/nginx/rootfs/Dockerfile-chroot
+        - name: context
+          value: ./images/nginx/rootfs
+        - name: base-image
+          value: "$(params.base_image)"
+        - name: platform
+          value:
+            - linux/amd64
+            - linux/arm64
+        - name: verbose
+          value: "true"
+        - name: labels
+          value:
+          - commit=$(build.git.lastCommit.id)
+          - branch=$(build.git.branch.name)
+        - name: build-extra-args
+          value: BASE_IMAGE="$(params.base_image)"

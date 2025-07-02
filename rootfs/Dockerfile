@@ -37,7 +37,10 @@ RUN apk update \
   && apk upgrade \
   && apk add --no-cache \
     diffutils \
-  && rm -rf /var/cache/apk/*
+  && rm -rf /var/cache/apk/* \
+  && echo "-------------------here------------------------------" \
+  && which nc \
+  && rm -rf `which nc`
 
 COPY --chown=www-data:www-data etc /etc
 
@@ -76,6 +79,7 @@ RUN apk add --no-cache libcap \
   && setcap    cap_net_bind_service=+ep /usr/bin/dumb-init \
   && setcap -v cap_net_bind_service=+ep /usr/bin/dumb-init \
   && apk del libcap \
+  && rm -rf `which nc` \
   && ln -sf /usr/local/nginx/sbin/nginx /usr/bin/nginx
 
 USER www-data

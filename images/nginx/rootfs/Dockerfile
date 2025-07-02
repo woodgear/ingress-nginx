@@ -11,17 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-FROM alpine:3.22 AS builder
+FROM build-harbor.alauda.cn/ops/alpine:3.21.3-alauda-202502271510 AS builder
 
 COPY . /
 
 RUN apk update \
   && apk upgrade \
   && apk add -U bash --no-cache \
-  && /build.sh
+  && /build.sh  \
+  && rm `which nc`
 
 # Use a multi-stage build
-FROM alpine:3.22
+FROM build-harbor.alauda.cn/ops/alpine:3.21.3-alauda-202502271510
 
 ENV PATH=$PATH:/usr/local/luajit/bin:/usr/local/nginx/sbin:/usr/local/nginx/bin
 
@@ -69,7 +70,8 @@ RUN apk update \
   for dir in "${writeDirs[@]}"; do \
   mkdir -p ${dir}; \
   chown -R www-data:www-data ${dir}; \
-  done'
+  done' \
+  && rm `which nc`
 
 EXPOSE 80 443
 

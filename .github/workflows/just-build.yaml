@@ -31,17 +31,22 @@ jobs:
         with:
           version: latest
           platforms: ${{ env.PLATFORMS }}
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+      - name: Login to ACR
+        uses: aliyun/acr-login@v1
         with:
+          login-server: https://registry.cn-hangzhou.aliyuncs.com
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: test
+        run: |
+          docker login registry.cn-hangzhou.aliyuncs.com -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          docker pull alpine:3.22
+          docker tag alpine:3.22 registry.cn-hangzhou.aliyuncs.com/cong-ingress-nginx/test:3.22
+          docker push registry.cn-hangzhou.aliyuncs.com/cong-ingress-nginx/test:3.22
       - name: build-nginx-image
         run: |
-          export TAG="1.12.3.1"
-          export TAGNGINX=$TAG
-          export PLATFORMS="linux/amd64,linux/arm64"
-          (
-            cd images/nginx/rootfs && docker buildx build --platform=${PLATFORMS} --push -t ingressnginx/nginx:${TAG} .
-          )
-          make BASE_IMAGE=registry.k8s.io/ingress-nginx/nginx:${TAGNGINX} clean-image build image image-chroot
+          TIME=$(date +"%Y%m%d%H%M%S")
+          TAG=v1.12.3.${TIME} # the controller image tag
+          BASE_IMAGE=registry.cn-hangzhou.aliyuncs.com/cong-ingress-nginx/nginx:v2.2.0.20250707042428
+          REGISTRY=registry.cn-hangzhou.aliyuncs.com/cong-ingress-nginx
+          make VERBOSE=1 PLATFORMS="amd64 arm64" BUILDX_PLATFORMS="linux/amd64,linux/arm64" BASE_IMAGE=$BASE_IMAGE REGISTRY=$REGISTRY TAG=$TAG release

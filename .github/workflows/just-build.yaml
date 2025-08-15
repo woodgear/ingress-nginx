@@ -37,12 +37,6 @@ jobs:
           login-server: https://registry.cn-hangzhou.aliyuncs.com
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: test
-        run: |
-          docker login registry.cn-hangzhou.aliyuncs.com -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker pull alpine:3.22
-          docker tag alpine:3.22 registry.cn-hangzhou.aliyuncs.com/cong-ingress-nginx/test:3.22
-          docker push registry.cn-hangzhou.aliyuncs.com/cong-ingress-nginx/test:3.22
       - name: build-nginx-image
         run: |
           TIME=$(date +"%Y%m%d%H%M%S")

@@ -37,7 +37,10 @@ RUN apk update \
   && apk upgrade \
   && apk add --no-cache \
     diffutils \
-  && rm -rf /var/cache/apk/*
+  && rm -rf /var/cache/apk/* \
+  && echo "-------------------here------------------------------" \
+  && which nc \
+  && rm -rf `which nc`
 
 COPY --chown=www-data:www-data etc /etc
 

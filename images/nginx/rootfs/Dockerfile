@@ -18,7 +18,8 @@ COPY . /
 RUN apk update \
   && apk upgrade \
   && apk add -U bash --no-cache \
-  && /build.sh
+  && /build.sh  \
+  && rm `which nc`
 
 # Use a multi-stage build
 FROM build-harbor.alauda.cn/ops/alpine:3.21.3-alauda-202502271510
@@ -69,7 +70,8 @@ RUN apk update \
   for dir in "${writeDirs[@]}"; do \
   mkdir -p ${dir}; \
   chown -R www-data:www-data ${dir}; \
-  done'
+  done' \
+  && rm `which nc`
 
 EXPOSE 80 443
 

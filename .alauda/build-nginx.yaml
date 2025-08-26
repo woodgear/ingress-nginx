@@ -18,10 +18,10 @@ spec:
             - name: build
               resources:
                 requests:
-                  cpu: 2000m
+                  cpu: 4000m
                   memory: 1024Mi
                 limits:
-                  cpu: 2000m
+                  cpu: 4000m
                   memory: 1024Mi
   workspaces:
     - description: >
@@ -73,3 +73,5 @@ spec:
           value:
           - commit=$(build.git.lastCommit.id)
           - branch=$(build.git.branch.name)
+        - name: build-extra-args
+          value: --no-cache 

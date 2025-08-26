@@ -41,6 +41,6 @@ jobs:
         run: |
           TIME=$(date +"%Y%m%d%H%M%S")
           TAG=v1.12.3.${TIME} # the controller image tag
-          BASE_IMAGE=registry.cn-hangzhou.aliyuncs.com/cong-ingress-nginx/nginx:v2.2.0.20250826072222
+          BASE_IMAGE=registry.cn-hangzhou.aliyuncs.com/cong-ingress-nginx/nginx:v2.2.0.20250826095053
           REGISTRY=registry.cn-hangzhou.aliyuncs.com/cong-ingress-nginx
           make VERBOSE=1 PLATFORMS="amd64 arm64" BUILDX_PLATFORMS="linux/amd64,linux/arm64" BASE_IMAGE=$BASE_IMAGE REGISTRY=$REGISTRY TAG=$TAG release
